@@ -4,13 +4,29 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DB_URL")
 }
 
 model User {
-  id             Int          @id @default(autoincrement())
-  username       String       @unique
+  id             Int    @id @default(autoincrement())
+  username       String @unique
   name           String
   hashedPassword String
+}
+
+model ChatRecord {
+  id          String @id @default(uuid())
+  first_user  Int
+  second_user Int
+}
+
+model Message {
+  id                      Int      @id @default(autoincrement())
+  chat_id                 String
+  sender_id               Int
+  receiver_id             Int
+  message                 String
+  is_notification_message Boolean  @default(false)
+  created_at              DateTime @default(now())
 }
