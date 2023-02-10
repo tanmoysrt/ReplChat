@@ -11,7 +11,7 @@ class AuthMiddleware {
      */
     static authRequired(req, res, next) {
         if (req.is_authenticated == false) {
-            res.redirect("/auth/login");
+            res.status(401).json({error: "Unauthorized"});
         }else{
             next();
         }
@@ -42,32 +42,6 @@ class AuthMiddleware {
             if(req.user == null) req.is_authenticated = false;
         }
         next();
-    }
-
-    /**
-     * @param {Request} req 
-     * @param {Response} res 
-     * @param {NextFunction} next 
-     */
-    static redirectLoggedInUser(req, res, next) {
-        if (req.is_authenticated) {
-            res.redirect(`/${req.user.username}`);
-        }else{
-            next();
-        }
-    }
-
-    /**
-     * @param {Request} req 
-     * @param {Response} res 
-     * @param {NextFunction} next 
-     */
-    static loginRequired(req, res, next) {
-        if (req.is_authenticated) {
-            next();
-        }else{
-            res.redirect("/auth/login");
-        }
     }
 }
 

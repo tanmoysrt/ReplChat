@@ -14,12 +14,15 @@ var cookieParser = require('cookie-parser');
 global.__basedir = __dirname;
 app.disable('x-powered-by')
 app.set('view engine', 'ejs');
-app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 
-
-
+// Set logger
+if(DEBUG == 1) {
+    var morgan = require('morgan');
+    app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+}
 
 // Middleware
 const {AuthMiddleware} = require("./middleware");
@@ -28,8 +31,6 @@ app.use(AuthMiddleware.resolveUser);
 
 // Route
 app.use("/auth", require("./routes/auth.route"));
-app.use("", require("./routes/user.route"));
-app.use("", require("./routes/repo.route"));
 
 
 // Global error handler

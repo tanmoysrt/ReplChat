@@ -3,24 +3,15 @@ const prisma = require("../db").getInstance();
 const Password = require("../utils/password");
 const JWT = require("../utils/jwt");
 
-// login page
-router.get("/login", async(req, res) => {
-    res.render("login", {
-        "isSuccess": false,
-        "isError": false,
-    });
-})
-
-// Handle login submission
+// login
 router.post("/login", async (req, res) => {
     const username =  req.body.username;
-    const password = req.body.password;
+    const password = req.body.password.toString();
     if(!username || !password) {
-        return res.render("login", {
-            "isSuccess": false,
-            "isError": true,
+        return res.status(400).json({
+            "success": false,
             "error": "Please fill in all fields"
-        });
+        })
     }
     const user = await prisma.user.findFirst({
         where: {
@@ -34,20 +25,18 @@ router.post("/login", async (req, res) => {
         }
     })
     if(user == null){
-        return res.render("login", {
-            "isSuccess": false,
-            "isError": true,
-            "error": "No user exists with this username"
-        });
+        return res.status(404).json({
+            "success": false,
+            "error": "User not found"
+        })
     }
     // Verify hash
     const passwordVerified = await Password.check(password, user.hashedPassword);
     if(!passwordVerified) {
-        return res.render("login", {
-            "isSuccess": false,
-            "isError": true,
+        return res.status(200).json({
+            "success": false,
             "error": "Incorrect password"
-        });
+        })
     }
     // Create jwt
     const generatedToken = JWT.generate({
@@ -60,36 +49,24 @@ router.post("/login", async (req, res) => {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7,
     });
-    // Redirect to home
-    res.redirect("/");
+    // Return success and jwt
+    res.status(200).json({
+        "success": true,
+        "message": "Logged in successfully",
+        "token": generatedToken
+    })
 })
 
-// Handle logout
-router.get("/logout", (req, res) => {
-
-})
-
-
-// Registration page
-router.get("/register", (req, res) => {
-    res.render("register", {
-        "isSuccess": false,
-        "isError": false,
-    });
-})
-
-// Handle registration
-
+// register
 router.post("/register", async (req, res) => {
-    const name = req.body.username;
+    const name = req.body.name;
     const username =  req.body.username;
     const password = req.body.password;
     if(!username || !password || !name) {
-        return res.render("register", {
-            "isSuccess": false,
-            "isError": true,
+        return res.status(400).json({
+            "success": false,
             "error": "Please fill in all fields"
-        });
+        })
     }
     const user = await prisma.user.findFirst({
         where: {
@@ -100,11 +77,10 @@ router.post("/register", async (req, res) => {
         }
     })
     if(user != null){
-        return res.render("register", {
-            "isSuccess": false,
-            "isError": true,
-            "error": "Username already exists"
-        });
+        return res.status(200).json({
+            "success": false,
+            "error": "User already exists"
+        })
     }
     const generatedHash = await Password.make(password);
     const newUser = await prisma.user.create({
@@ -112,14 +88,25 @@ router.post("/register", async (req, res) => {
             name: name,
             username: username,
             hashedPassword: generatedHash
+        },
+        select: {
+            id: true,
+            name: true,
+            username: true,
         }
     })
-    // TODO login and redirect to home
-    res.render("register", {
-        "isSuccess": true,
-        "isError": false,
-        "success": "Registration successful"
-    });
+    // Create jwt
+    const generatedToken = JWT.generate({
+        id: newUser.id,
+        name: newUser.name,
+        username: newUser.username,
+    })
+    // Send jwt token
+    res.status(200).json({
+        "success": true,
+        "message": "User created",
+        "token": generatedToken
+    })
 })
 
 
