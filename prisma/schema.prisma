@@ -21,8 +21,7 @@ model User {
   username       String      @unique
   name           String
   password       String
-  chat_record    ChatRecord? @relation(fields: [chat_record_id], references: [id])
-  chat_record_id String?
+  chat_records    ChatRecord[]
   sent_messages  Message[]
 }
 
