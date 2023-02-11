@@ -50,6 +50,7 @@ io.on("connection", (socket) => {
     require("./events/fetch_status")(io, socket);
     require("./events/new_chat")(io, socket);
     require("./events/new_message")(io, socket);
+    require("./events/delete_message")(io, socket);
     require("./events/list_chats")(io, socket);
     require("./events/fetch_messages")(io, socket);
     require("./events/typing")(io, socket);
