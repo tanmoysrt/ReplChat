@@ -41,6 +41,10 @@ io.use(require("./middleware").SocketAuthMiddleware.authAndResolveUser);
 io.on("connection", (socket) => {
     require("./events/connect")(io, socket);
     require("./events/disconnect")(io, socket);
+    require("./events/ping")(io, socket);
+    require("./events/fetch_status")(io, socket);
+    require("./events/new_chat")(io, socket);
+    require("./events/list_chats")(io, socket);
 })
 
 // Listen

@@ -6,7 +6,7 @@ class Query{
      * @param {String} username 
      * @returns {Promise<Array<String>>}
      */
-    static async findAllConnectedUsers(username){
+    static async findAllConnectedUsersUsernames(username){
         const users = await prisma.user.findMany({
             where: {
                 chat_records: {

@@ -15,7 +15,7 @@ function handler(io, socket){
                 "online": false
             })
             // emit user_gone_offline
-            const related_usernames = await Query.findAllConnectedUsers(socket.user.username);
+            const related_usernames = await Query.findAllConnectedUsersUsernames(socket.user.username);
             related_usernames.forEach(username => {
                 io.to(username).emit("user_gone_offline", {
                     username: socket.user.username

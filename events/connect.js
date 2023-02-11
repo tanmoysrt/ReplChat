@@ -15,7 +15,7 @@ async function handler(io, socket){
     // join room -- to broadcast to all session of a user
     socket.join(socket.user.username);
     // emit user_came_online
-    const related_usernames = await Query.findAllConnectedUsers(socket.user.username);
+    const related_usernames = await Query.findAllConnectedUsersUsernames(socket.user.username);
     related_usernames.forEach(username => {
         io.to(username).emit("user_came_online", {
             username: socket.user.username
