@@ -4,7 +4,7 @@ require('dotenv').config();
 const PORT = parseInt(process.env.PORT);
 const DEBUG = parseInt(process.env.DEBUG);
 
-// Express
+// Setup
 const express = require('express');
 const SocketIO = require('socket.io');
 const app = express();
@@ -39,10 +39,8 @@ app.use((err, req, res, next) => {
 // ? Socket.io routes
 io.use(require("./middleware").SocketAuthMiddleware.authAndResolveUser);
 io.on("connection", (socket) => {
-    console.log("Socket connected");
-    socket.on("disconnect", () => {
-        console.log("Socket disconnected");
-    })
+    require("./events/connect")(io, socket);
+    require("./events/disconnect")(io, socket);
 })
 
 // Listen
