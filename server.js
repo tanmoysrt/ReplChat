@@ -4,6 +4,11 @@ require('dotenv').config();
 const PORT = parseInt(process.env.PORT);
 const DEBUG = parseInt(process.env.DEBUG);
 
+// JSON bigint override
+const json_big = require('json-bigint');
+JSON.parse = json_big.parse;
+JSON.stringify = json_big.stringify;
+
 // Setup
 const express = require('express');
 const SocketIO = require('socket.io');
@@ -44,6 +49,7 @@ io.on("connection", (socket) => {
     require("./events/ping")(io, socket);
     require("./events/fetch_status")(io, socket);
     require("./events/new_chat")(io, socket);
+    require("./events/new_message")(io, socket);
     require("./events/list_chats")(io, socket);
     require("./events/fetch_messages")(io, socket);
     require("./events/typing")(io, socket);
