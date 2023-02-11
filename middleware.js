@@ -23,7 +23,7 @@ class AuthMiddleware {
      * @param {NextFunction} next 
      */
     static async resolveUser(req, res, next) {
-        if (!req.cookies.token || JWT.verify(req.cookies.token) == false) {
+        if (!req.headers.authorization || JWT.verify(req.headers.authorization) == false) {
             req.is_authenticated = false;
             req.user = null;
         }else{
