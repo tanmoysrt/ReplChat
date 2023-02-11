@@ -42,8 +42,9 @@ model Message {
   is_notification_message Boolean     @default(false)
   message_type            MessageType @default(TEXT)
   text_content            String
-  file_stored_name        String
-  file_name               String
+  file_stored_name        String?
+  file_name               String?
+  file_mime_type          String?
   timestamp               BigInt
   is_replied              Boolean     @default(false)
   replied_to              Message?    @relation("RepliedTo", fields: [replied_to_id], references: [id])

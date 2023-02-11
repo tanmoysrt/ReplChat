@@ -13,7 +13,6 @@ var cookieParser = require('cookie-parser');
 // Config
 global.__basedir = __dirname;
 app.disable('x-powered-by')
-app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -31,6 +30,7 @@ app.use(AuthMiddleware.resolveUser);
 
 // Route
 app.use("/auth", require("./routes/auth.route"));
+app.use("/file", require("./routes/file"));
 
 
 // Global error handler
