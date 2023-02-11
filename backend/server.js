@@ -12,15 +12,23 @@ JSON.stringify = json_big.stringify;
 // Setup
 const express = require('express');
 const SocketIO = require('socket.io');
+const cors = require('cors');
 const app = express();
 const http_server = require("http").createServer(app);
-const io = new SocketIO.Server(http_server);
+const io = new SocketIO.Server(http_server, {
+    cors: {
+        origin: "*"
+    }
+});
 
 // Config
 global.__basedir = __dirname;
 app.disable('x-powered-by')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors({
+    origin: "*"
+}))
 
 // Set logger
 if (DEBUG == 1) {
