@@ -17,12 +17,12 @@ enum MessageType {
 }
 
 model User {
-  id             String      @id @default(uuid())
-  username       String      @unique
-  name           String
-  password       String
-  chat_records    ChatRecord[]
-  sent_messages  Message[]
+  id            String       @id @default(uuid())
+  username      String       @unique
+  name          String
+  password      String
+  chat_records  ChatRecord[]
+  sent_messages Message[]
 }
 
 model ChatRecord {
