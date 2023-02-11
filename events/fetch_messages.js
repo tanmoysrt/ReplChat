@@ -10,7 +10,7 @@ const prisma = require("../db").getInstance();
  * 
  **/
 function handler(io, socket){
-    socket.on("fetch_messages", async ({chat_id}) => {
+    socket.on("fetch_messages", async ({chat_id}, callback) => {
         const messages = await prisma.message.findMany({
             where: {
                 chat: {
@@ -43,7 +43,14 @@ function handler(io, socket){
                     }
                 },
                 timestamp: true
+            },
+            orderBy: {
+                timestamp: "asc"
             }
+        })
+        callback({
+            "success": true,
+            "data": messages
         })
     })
 }
