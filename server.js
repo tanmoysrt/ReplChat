@@ -19,13 +19,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Set logger
-if(DEBUG == 1) {
+if (DEBUG == 1) {
     var morgan = require('morgan');
     app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 }
 
 // Middleware
-const {AuthMiddleware} = require("./middleware");
+const { AuthMiddleware } = require("./middleware");
 
 app.use(AuthMiddleware.resolveUser);
 
@@ -38,5 +38,6 @@ app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ error: "Unexpected Error" });
 })
+
 
 app.listen(PORT, () => console.log(`🚀 @ http://localhost:${PORT}`));

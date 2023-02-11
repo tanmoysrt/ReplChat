@@ -21,7 +21,7 @@ router.post("/login", async (req, res) => {
             id: true,
             name: true,
             username: true,
-            hashedPassword: true,
+            password: true,
         }
     })
     if(user == null){
@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
         })
     }
     // Verify hash
-    const passwordVerified = await Password.check(password, user.hashedPassword);
+    const passwordVerified = await Password.check(password, user.password);
     if(!passwordVerified) {
         return res.status(200).json({
             "success": false,
@@ -87,7 +87,7 @@ router.post("/register", async (req, res) => {
         data: {
             name: name,
             username: username,
-            hashedPassword: generatedHash
+            password: generatedHash
         },
         select: {
             id: true,

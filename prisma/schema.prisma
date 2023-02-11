@@ -8,25 +8,47 @@ datasource db {
   url      = env("DB_URL")
 }
 
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+}
+
 model User {
-  id             Int    @id @default(autoincrement())
-  username       String @unique
+  id             String      @id @default(uuid())
+  username       String      @unique
   name           String
-  hashedPassword String
+  password       String
+  chat_record    ChatRecord? @relation(fields: [chat_record_id], references: [id])
+  chat_record_id String?
+  sent_messages  Message[]
 }
 
 model ChatRecord {
-  id          String @id @default(uuid())
-  first_user  Int
-  second_user Int
+  id            String    @id @default(uuid())
+  name          String?
+  is_group_chat Boolean   @default(false)
+  users         User[]
+  messages      Message[]
 }
 
 model Message {
-  id                      Int      @id @default(autoincrement())
+  id                      Int         @id @default(autoincrement())
+  chat                    ChatRecord  @relation(fields: [chat_id], references: [id])
   chat_id                 String
-  sender_id               Int
-  receiver_id             Int
-  message                 String
-  is_notification_message Boolean  @default(false)
-  created_at              DateTime @default(now())
+  sender                  User        @relation(fields: [sender_id], references: [id])
+  sender_id               String
+  is_notification_message Boolean     @default(false)
+  message_type            MessageType @default(TEXT)
+  text_content            String
+  file_stored_name        String
+  file_name               String
+  timestamp               BigInt
+  is_replied              Boolean     @default(false)
+  replied_to              Message?    @relation("RepliedTo", fields: [replied_to_id], references: [id])
+  replied_to_id           Int?
+  tagged_messages         Message[]   @relation("RepliedTo")
+  created_at              DateTime    @default(now())
 }
