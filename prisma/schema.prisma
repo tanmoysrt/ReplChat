@@ -50,5 +50,4 @@ model Message {
   replied_to              Message?    @relation("RepliedTo", fields: [replied_to_id], references: [id])
   replied_to_id           Int?
   tagged_messages         Message[]   @relation("RepliedTo")
-  created_at              DateTime    @default(now())
 }
