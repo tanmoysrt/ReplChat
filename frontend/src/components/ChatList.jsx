@@ -10,7 +10,7 @@ export default function ChatList() {
                 "lg": "25vw"
             }}
             h="100%"
-            bg="blackAlpha.50"
+            bg="gray.50"
             borderRadius={16}
             p={3}
         >

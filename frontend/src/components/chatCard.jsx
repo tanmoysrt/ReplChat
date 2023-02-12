@@ -20,8 +20,8 @@ export default function ChatCard(){
                     <Box bg="green.400" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">100+</Box>
                 </Flex>
             </Flex>
-            <Flex direction="row" justifyContent="space-between" mt="1.5">
-                <Text fontWeight="normal" fontSize="md" color="gray.700">uptime bot ta halka dekhis na time pv ta</Text>
+            <Flex direction="row" justifyContent="space-between" mt="1.5" gap="2">
+                <Text fontWeight="normal" fontSize="md" color="gray.700" textOverflow="clip" overflow="hidden" whiteSpace="nowrap">uptime bot ta halka dekhis na time pv ta</Text>
                 <Text fontWeight="medium" fontSize="md" color="gray.700">&nbsp;&nbsp;7:41pm</Text>
             </Flex>
         </Box>
