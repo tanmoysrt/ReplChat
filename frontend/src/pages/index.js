@@ -1,11 +1,13 @@
+import ChatList from '@/components/ChatList'
+import { Box } from '@chakra-ui/react'
 import Head from 'next/head'
 import Image from 'next/image'
 
 
 export default function Home() {
   return (
-    <>
-      <h1>hello</h1>
-    </>
+    <Box p={3} h="100vh">
+      <ChatList/>
+    </Box>
   )
 }
