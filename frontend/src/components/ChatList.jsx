@@ -2,10 +2,21 @@ import { Box, Button, Stack, useDisclosure } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
 import ChatCard from "./chatCard";
 import NewChatModal from "./NewChatModal";
+import SocketIOController from '@/controller/sockethandler'
 
+/**
+ * @param {SocketIOController} controller
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function ChatList({controller}) {
-    const newChatModalDisclousre = useDisclosure();
+    const newChatModalDisclosure = useDisclosure();
     const dataRef = useRef({})
+
+    function onNewChatModalSubmit(){
+        newChatModalDisclosure.onClose();
+        controller.initNewChat(dataRef.current.new_chat_username);
+    }
 
     return(
         <>
@@ -23,26 +34,22 @@ export default function ChatList({controller}) {
             <Stack gap={2}>
                 <Stack direction="row" justifyContent="space-between">
                     <Stack direction="row">
-                        <Button size='xs' colorScheme="blue" variant='outline' onClick={newChatModalDisclousre.onOpen}>New Chat</Button>
+                        <Button size='xs' colorScheme="blue" variant='outline' onClick={newChatModalDisclosure.onOpen}>New Chat</Button>
                         <Button size='xs' colorScheme="blue" variant='outline'>New Group Chat</Button>
                     </Stack>
                     <Button size='xs' float="right" colorScheme="red">Logout</Button>
                 </Stack>
-
-                
-                <ChatCard />
-                <ChatCard />
+                {
+                    controller.chatList.map(chat => <ChatCard record={chat} key={chat.id} />)
+                }
             </Stack>
         </Box>
 
         <NewChatModal 
-            isOpen={newChatModalDisclousre.isOpen} 
-            onClose={newChatModalDisclousre.onClose} 
+            isOpen={newChatModalDisclosure.isOpen}
+            onClose={newChatModalDisclosure.onClose}
             dataRef={dataRef} 
-            onClickSubmit={()=>{
-                newChatModalDisclousre.onClose();
-                controller.initNewChat(dataRef.current.new_chat_username);
-            }}
+            onClickSubmit={()=>{ onNewChatModalSubmit() }}
         />
         </>
     );

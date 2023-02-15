@@ -1,12 +1,13 @@
 import Swal from "sweetalert2";
 import SocketServer from "./sockerserver";
+import Chat from  "@/models/chat";
 
 class SocketIOController{
     /**
-     * @param {[]} chatList 
+     * @param {Chat[]} chatList
      * @param {function([])} setChatList 
-     * @param {[]} userOnlineStatusData 
-     * @param {function([])} setUserOnlineStatusData 
+     * @param {{}} userOnlineStatusData
+     * @param {function({})} setUserOnlineStatusData
      * @param {[]} currentChatDetails 
      * @param {function([])} setCurrentChatDetails 
      * @param {[]} currentChatMessages 
@@ -26,11 +27,16 @@ class SocketIOController{
         this.setCurrentChatDetails = setCurrentChatDetails;
         this.currentChatMessages = currentChatMessages;
         this.setCurrentChatMessages = setCurrentChatMessages;
-        this.socketServer = new SocketServer();
+        this.socketServer = SocketServer.getInstance();
     }
 
     init(){
-        this.socketServer.init();
+        this.socketServer.init(()=>{
+            this.socketServer.socket.once("connect", () => {
+                this.startListeners();
+                this.fetchChatList();
+            })
+        });
     }
 
     initNewChat(username){
@@ -53,6 +59,23 @@ class SocketIOController{
         })
     }
 
+    startListeners(){
+        this.listenerForNewChat();
+    }
+
+    fetchChatList(){
+        this.socketServer.emit("list_chats", null, (data) => {
+            if(data.success){
+                this.setChatList(data["data"].map(chat => Chat.fromJson(chat)));
+            }
+        })
+    }
+
+    listenerForNewChat(){
+        this.socketServer.on("new_chat_added", (data) => {
+            this.setChatList([...this.chatList, Chat.fromJson(data)]);
+        })
+    }
 
 }
 

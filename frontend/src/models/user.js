@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 class User{
     constructor(id, name, username){
         this.id = id;
@@ -7,14 +9,22 @@ class User{
         this.lastSeen = null;
     }
 
+    /**
+     * @param {Intl} lastSeen
+     */
     setOnline(lastSeen){
         this.online = true;
-        this.lastSeen = lastSeen;
+        if(lastSeen) this.lastSeen = moment(lastSeen).fromNow()
+        else this.lastSeen = null;
     }
 
+    /**
+     * @param {Intl} lastSeen
+     */
     setOffline(lastSeen){
         this.online = false;
-        this.lastSeen = lastSeen;
+        if(lastSeen) this.lastSeen = moment(lastSeen).fromNow()
+        else this.lastSeen = null;
     }
 
     static fromJson(json){

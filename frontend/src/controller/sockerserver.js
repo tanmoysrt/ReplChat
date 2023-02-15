@@ -3,7 +3,17 @@ import config from "@/config";
 
 
 class SocketServer {
-    init() {
+    /**
+     * @returns {SocketServer}
+     */
+    static getInstance() {
+        if (!SocketServer.instance) {
+            SocketServer.instance = new SocketServer();
+        }
+        return SocketServer.instance;
+    }
+
+    init(runFunction) {
         this.socket = io(config.SOCKER_IO_SERVER_URL, {
             auth: {
                 token: localStorage.getItem("token") || ""
@@ -21,6 +31,7 @@ class SocketServer {
                 console.log("Ping error")
             }
         }, 5000);
+        runFunction();
     }
 
     on(event, callback) {
@@ -28,12 +39,19 @@ class SocketServer {
     }
 
     emit(event, data, callback) {
-        if(!data) {
+        // console.log(this.socket);
+        if(!data && !callback) {
             this.socket.emit(event);
             return;
         }
         if(!callback){
             this.socket.emit(event, data);
+            return;
+        }
+        if(callback && !data){
+            this.socket.emitWithAck(event).then(r => {
+                callback(r);
+            })
             return;
         }
         this.socket.emit(event, data, callback);

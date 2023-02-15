@@ -16,11 +16,6 @@ const {
 } = require("@chakra-ui/react");
 
 function NewChatModal({ isOpen, onClose, dataRef, onClickSubmit }) {
-
-    useEffect(()=>{
-        console.log(isOpen)
-    })
-
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>

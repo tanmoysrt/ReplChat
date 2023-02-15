@@ -7,11 +7,6 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
-  // chatList, setChatList, 
-  // userOnlineStatusList, setUserOnlineStatusList, 
-  // currentChatDetails, setCurrentChatDetails,
-  // currentChatMessages, setCurrentChatMessages,  
-
   const [chatList, setChatList] = useState([]);
   const [userOnlineStatusData, setUserOnlineStatusData] = useState({});
   const [currentChatDetails, setCurrentChatDetails] = useState({});
