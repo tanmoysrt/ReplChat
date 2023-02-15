@@ -68,6 +68,7 @@ function handler(io, socket){
                 id: true,
                 sender: {
                     select: {
+                        id: true,
                         username: true,
                         name: true
                     }
@@ -94,7 +95,10 @@ function handler(io, socket){
         // list of usernames
         const usernames_list = chat.users.map(user => user.username);
         // send to all users in the chat
-        io.to(usernames_list).except(socket.user.username).emit("new_message_added", new_message);
+        io.to(usernames_list).except(socket.user.username).emit("new_message_added", {
+            "chat_id": chat_id,
+            "data": new_message
+        });
     })
 }
 

@@ -122,7 +122,10 @@ function handler(io, socket){
                 name: user.name
             }
         });
-        io.to(usernames_list).emit("new_message_added", new_message);
+        io.to(usernames_list).emit("new_message_added", {
+            "chat_id": chat_id,
+            "data": new_message
+        });
         // you_are_added_to_group event
         const chatRecordUpdated = await prisma.chatRecord.findFirst({
             where: {
@@ -141,7 +144,15 @@ function handler(io, socket){
                 }
             }
         })
-        io.to(username).emit("new_chat_added", chatRecordUpdated);
+        io.to(username).emit("new_chat_added", {
+            ...chatRecordUpdated,
+            users: chatRecordUpdated.users.filter(user => user.username != socket.user.username),
+            last_message: {
+                message_type: "TEXT",
+                text_content: "No messages yet",
+                created_at: ""
+            }  
+        });
     })
 }
 

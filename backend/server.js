@@ -26,9 +26,8 @@ global.__basedir = __dirname;
 app.disable('x-powered-by')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors({
-    origin: "*"
-}))
+app.use(cors())
+app.options('*', cors());
 
 // Set logger
 if (DEBUG == 1) {

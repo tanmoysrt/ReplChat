@@ -54,7 +54,12 @@ function handler(io, socket){
         let payload_for_current_user = JSON.parse(JSON.stringify(chat_record));
         payload_for_current_user = {
             ...payload_for_current_user,
-            users: payload_for_current_user.users.filter(user => user.username != socket.user.username)
+            users: payload_for_current_user.users.filter(user => user.username != socket.user.username),
+            last_message: {
+                message_type: "TEXT",
+                text_content: "No messages yet",
+                created_at: ""
+            }   
         }
         io.to(socket.user.username).emit("new_chat_added", payload_for_current_user);
 
@@ -62,7 +67,12 @@ function handler(io, socket){
         let payload_for_receiver_user = JSON.parse(JSON.stringify(chat_record));
         payload_for_receiver_user = {
             ...payload_for_receiver_user,
-            users: payload_for_receiver_user.users.filter(user => user.username != username)
+            users: payload_for_receiver_user.users.filter(user => user.username != username),
+            last_message: {
+                message_type: "TEXT",
+                text_content: "No messages yet",
+                created_at: ""
+            }  
         }
         io.to(username).emit("new_chat_added", payload_for_receiver_user);
     })
