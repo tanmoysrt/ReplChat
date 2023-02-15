@@ -38,6 +38,11 @@ export default function ChatList({controller}) {
         dataRef.current.new_member_username =  "";
     }
 
+    function logout(){
+        localStorage.clear();
+        window.location.href = "/auth";
+    }
+
     return(
         <>
         <Box 
@@ -61,7 +66,7 @@ export default function ChatList({controller}) {
                             <Button size='xs' colorScheme="blue" variant='outline' onClick={addNewMemberModalDisclosure.onOpen}>Add User</Button>
                         }
                     </Stack>
-                    <Button size='xs' float="right" colorScheme="red">Logout</Button>
+                    <Button size='xs' float="right" colorScheme="red" onClick={logout}>Logout</Button>
                 </Stack>
                 {
                     controller.chatList.map(chat => <ChatCard record={chat} controller={controller} key={chat.id} />)
