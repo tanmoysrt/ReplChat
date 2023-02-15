@@ -37,7 +37,7 @@ export default function ChatCard({record, controller}){
                 {
                     record.typing ? <Text fontWeight="normal" fontSize="md" color="gray.700" textOverflow="clip" overflow="hidden" whiteSpace="nowrap">typing...</Text> :
                         <>
-                            <Text fontWeight="normal" fontSize="md" color="gray.700" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">&nbsp;&nbsp;{record.last_message_text}</Text>
+                            <Text fontWeight="normal" fontSize="md" color="gray.700" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">{record.last_message_text}&nbsp;&nbsp;</Text>
                             <Text fontWeight="normal" fontSize="md" color="gray.700" whiteSpace="nowrap">&nbsp;&nbsp;{record.last_message_time}</Text>
                         </>
                 }
