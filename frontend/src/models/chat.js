@@ -1,0 +1,48 @@
+class Chat{
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} name 
+     * @param {boolean} is_group_chat 
+     * @param {User[]} users 
+     */
+    constructor(id, name, is_group_chat, users, last_message_text, last_message_time){
+        this.id = id;
+        this.name = name;
+        this.is_group_chat = is_group_chat;
+        this.users = users;
+        this.last_message_text = last_message_text;
+        this.last_message_time = last_message_time;
+        if(!this.is_group_chat){
+            this.name = this.users[0].name;
+        }
+        this.typing = false;
+        this.typing_details = {
+            "name": ""
+        }
+    }
+
+    setTyping(name) {
+        this.typing = true;
+        this.typing_details.name = name;
+        setTimeout(() => {
+            this.typing = false;
+            this.typing_details.name = "";
+        }
+        , 3000);
+    }
+
+    static fromJson(json){
+        var chat = new Chat(
+            json.id||-1, 
+            json.name, 
+            json.is_group_chat,
+            json.users.map(user => User.fromJson(user)),
+            json.last_message.message_type == "TEXT" ? json.last_message.text_content : json.last_message.message_type,
+            json.last_message.created_at
+        );
+        return chat;
+    }
+}
+
+export default Chat;

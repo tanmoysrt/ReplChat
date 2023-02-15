@@ -17,7 +17,7 @@ export default function ChatCard(){
                 <Text fontWeight="medium" fontSize="md">Tanmoy Sarkar</Text>
                 <Flex gap="2">
                     <Box bg="red.500" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">100+</Box>
-                    <Box bg="green.400" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">100+</Box>
+                    <Box bg="green.400" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">Online</Box>
                 </Flex>
             </Flex>
             <Flex direction="row" justifyContent="space-between" mt="1.5" gap="2">

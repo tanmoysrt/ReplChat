@@ -1,8 +1,14 @@
-import { Box, Stack } from "@chakra-ui/react";
+import { Box, Button, Stack, useDisclosure } from "@chakra-ui/react";
+import { useEffect, useRef } from "react";
 import ChatCard from "./chatCard";
+import NewChatModal from "./NewChatModal";
 
-export default function ChatList() {
+export default function ChatList({controller}) {
+    const newChatModalDisclousre = useDisclosure();
+    const dataRef = useRef({})
+
     return(
+        <>
         <Box 
             w={{
                 "sm": "90vw",
@@ -15,9 +21,29 @@ export default function ChatList() {
             p={3}
         >
             <Stack gap={2}>
+                <Stack direction="row" justifyContent="space-between">
+                    <Stack direction="row">
+                        <Button size='xs' colorScheme="blue" variant='outline' onClick={newChatModalDisclousre.onOpen}>New Chat</Button>
+                        <Button size='xs' colorScheme="blue" variant='outline'>New Group Chat</Button>
+                    </Stack>
+                    <Button size='xs' float="right" colorScheme="red">Logout</Button>
+                </Stack>
+
+                
                 <ChatCard />
                 <ChatCard />
             </Stack>
         </Box>
+
+        <NewChatModal 
+            isOpen={newChatModalDisclousre.isOpen} 
+            onClose={newChatModalDisclousre.onClose} 
+            dataRef={dataRef} 
+            onClickSubmit={()=>{
+                newChatModalDisclousre.onClose();
+                controller.initNewChat(dataRef.current.new_chat_username);
+            }}
+        />
+        </>
     );
 }

@@ -1,4 +1,6 @@
 import { Box } from "@chakra-ui/react";
+import ChatBody from "./chatBody";
+import ChatBox from "./chatBox";
 import ChatHeader from "./chatHeader";
 
 export default function ChatScreen(){
@@ -9,6 +11,8 @@ export default function ChatScreen(){
             bg="white"
         >
             <ChatHeader />
+            <ChatBody/>
+            <ChatBox />
         </Box>
     );
 }

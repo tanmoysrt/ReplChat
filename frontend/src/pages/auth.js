@@ -9,17 +9,19 @@ import {
     Stack,
 } from '@chakra-ui/react'
 import { Logo } from '@/components/Logo'
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import AuthContoller from '@/controller/auth';
 
 export default function Auth() {
     const [showloginForm , setShowLoginForm] = useState(true);
+    const dataRef = useRef({});
 
     async function loginUser(){
-
+        await AuthContoller.login(dataRef.current.username, dataRef.current.password);
     }
 
     async function registerUser(){
-
+        await AuthContoller.register(dataRef.current.name, dataRef.current.username, dataRef.current.password);
     }
 
     return (
@@ -84,11 +86,11 @@ export default function Auth() {
                             <Stack spacing="5">
                                 <FormControl>
                                     <FormLabel htmlFor="username">Username</FormLabel>
-                                    <Input id="username" type="username" />
+                                    <Input id="username" type="username" onChange={(e)=>dataRef.current.username = e.target.value} />
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel htmlFor="password">Password</FormLabel>
-                                    <Input id="password" type="password" />
+                                    <Input id="password" type="password" onChange={(e)=>dataRef.current.password = e.target.value}/>
                                 </FormControl>      
                             </Stack>
                             <Stack spacing="3">
@@ -105,15 +107,15 @@ export default function Auth() {
                             <Stack spacing="5">
                                 <FormControl>
                                     <FormLabel htmlFor="name">Full Name</FormLabel>
-                                    <Input id="name" type="name" />
+                                    <Input id="name" type="name" onChange={(e)=>dataRef.current.name = e.target.value} />
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel htmlFor="username">Username</FormLabel>
-                                    <Input id="username" type="username" />
+                                    <Input id="username" type="username" onChange={(e)=>dataRef.current.username = e.target.value} />
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel htmlFor="password">Password</FormLabel>
-                                    <Input id="password" type="password" />
+                                    <Input id="password" type="password" onChange={(e)=>dataRef.current.password = e.target.value} />
                                 </FormControl>      
                             </Stack>
                             <Stack spacing="3">
