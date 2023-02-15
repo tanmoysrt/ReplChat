@@ -12,6 +12,10 @@ export default function Home() {
     "init": false,
     "message": {
       "text": ""
+    },
+    "user": {
+      "name": "",
+      "username": ""
     }
   });
   const [chatList, setChatList] = useState([]);

@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 
 export default function ChatHeader({controller}){
     return(
-        <Flex p={4} direction="column" width="full" bg="gray.50" borderRadius="16">
+        <Flex py={2} px={4} mb={2} direction="column" width="full" bg="gray.50" borderRadius="16">
             <Text fontWeight="medium">{controller.getChatDetailsById(controller.currentChatId).name}</Text>
             <Text color="blackAlpha.700">{
                 controller.getChatDetailsById(controller.currentChatId).typing ? (

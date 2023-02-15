@@ -40,8 +40,6 @@ class SocketIOController{
         this.setCurrentChatMessages = setCurrentChatMessages;
         this.currentChatMessagesRef = currentChatMessagesRef;
         this.socketServer = SocketServer.getInstance();
-        this.username = "";
-        this.name = "";
     }
 
 
@@ -49,8 +47,8 @@ class SocketIOController{
 
     init(token){
         const token_details = this.parseJwt(token);
-        this.username = token_details.username;
-        this.name = token_details.name;
+        this.dataRef.current.user.username = token_details.username;
+        this.dataRef.current.user.name = token_details.name;
         this.socketServer.init(()=>{
             this.socketServer.socket.once("connect", () => {
                 this.startListeners();
@@ -85,6 +83,7 @@ class SocketIOController{
         this.listenerForOnlineStatusUpdate();
         this.listenerForOfflineStatusUpdate();
         this.listenerForTypingUpdate();
+        this.listenerForNewMessage();
     }
 
     fetchChatList(){
@@ -119,6 +118,9 @@ class SocketIOController{
             if(data.success){
                 const messages = data["data"].map(message => Message.fromJSON(message));
                 this.setCurrentChatMessages(messages);
+                setTimeout(()=>{
+                    this.scrollToBottom();
+                }, 100)
             }
         })
     }
@@ -127,6 +129,12 @@ class SocketIOController{
         this.socketServer.on("new_chat_added", (data) => {
             this.setChatList([...this.chatListRef.current, Chat.fromJson(data)]);
             this.fetchUserOnlineStatusData();
+        })
+    }
+
+    listenerForNewMessage(){
+        this.socketServer.on("new_message_added", (data)=>{
+            this.actOnNewIncomingMessage(data["chat_id"], data["data"])
         })
     }
 
@@ -190,10 +198,25 @@ class SocketIOController{
         }, (data)=>{
             this.dataRef.current.message.text = "";
             if(data.success){
-                const message = Message.fromJSON(data.data);
-                this.setCurrentChatMessages([...this.currentChatMessagesRef.current, message]);
+                this.actOnNewIncomingMessage(this.currentChatIdRef.current, data.data);
             }
         })
+    }
+
+    actOnNewIncomingMessage(chatId, data){
+        if(this.currentChatIdRef.current === chatId){
+            const message = Message.fromJSON(data);
+            this.setCurrentChatMessages([...this.currentChatMessagesRef.current, message]);
+        }
+
+        const chat = this.getChatDetailsById(chatId);
+        chat.last_message_text = data.text_content;
+        chat.last_message_time = data.created_at;
+
+        this.setChatList([...this.chatListRef.current]);
+        setTimeout(()=>{
+            this.scrollToBottom();
+        }, 100)
     }
 
     chooseChat(chatId){
@@ -214,6 +237,12 @@ class SocketIOController{
         }).join(''));
 
         return JSON.parse(jsonPayload);
+    }
+
+    scrollToBottom(){
+        const chatWindow = document.getElementById('message_box');
+        if(!chatWindow) return;
+        chatWindow.scrollTo(0, chatWindow.scrollHeight);
     }
 }
 

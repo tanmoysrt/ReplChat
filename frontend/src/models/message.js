@@ -14,7 +14,7 @@ class Message{
         this.is_notification_message = is_notification_message;
         this.is_replied = is_replied;
         this.replied_to_id = replied_to_id;
-        this.timestamp = timestamp;
+        this.created_at = moment(timestamp).fromNow();
     }
 
     static fromJSON(json){
@@ -29,7 +29,7 @@ class Message{
             json["is_notification_message"],
             json["is_replied"],
             json["replied_to"] ? json["replied_to"]["id"] : null,
-            moment(json["timestamp"]).fromNow()
+            json["timestamp"]
         );
     }
 }

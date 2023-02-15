@@ -9,14 +9,15 @@ export default function ChatScreen({controller}){
         <Flex w="full" h="full" bg="white" justifyContent="center" alignItems="center">
             <Text>Select a chat message</Text>
         </Flex>
-        : <Box
+        : <Flex
+            direction="column"
             w="full"
-            h="full"
+            h="100%"
             bg="white"
         >
             <ChatHeader controller={controller} />
             <ChatBody   controller={controller} />
             <ChatBox    controller={controller} />
-        </Box>
+        </Flex>
     );
 }
