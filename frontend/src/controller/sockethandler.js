@@ -35,6 +35,7 @@ class SocketIOController{
             this.socketServer.socket.once("connect", () => {
                 this.startListeners();
                 this.fetchChatList();
+                this.fetchUserOnlineStatusData();
             })
         });
     }
@@ -69,6 +70,20 @@ class SocketIOController{
         this.socketServer.emit("list_chats", null, (data) => {
             if(data.success){
                 this.setChatList(data["data"].map(chat => Chat.fromJson(chat)));
+            }
+        })
+    }
+
+    fetchUserOnlineStatusData(){
+        this.socketServer.emit("fetch_all_status", null, (data) => {
+            if(data.success){
+                const status_data = data["data"];
+                let status_data_obj = {};
+                const timestamp_limit = Date.now() - 10000;
+                for(let i=0; i<status_data.length; i++){
+                    status_data_obj[status_data[i].username] = status_data[i].online;
+                }
+                this.setUserOnlineStatusData(status_data_obj);
             }
         })
     }
