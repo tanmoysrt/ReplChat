@@ -6,7 +6,7 @@ import Chat from "@/models/chat";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function ChatCard({record}){
+export default function ChatCard({record, controller}){
     return(
         <Box
             key={record.id}
@@ -23,10 +23,8 @@ export default function ChatCard({record}){
             <Flex direction="row" justifyContent="space-between">
                 <Text fontWeight="medium" fontSize="md">{record.name}</Text>
                 <Flex gap="2">
-                    {/*<Box bg="red.500" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">100+</Box>*/}
                     {
-                        // record.onl &&  <Box bg="green.400" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">Online</Box>
-
+                       !record.is_group_chat && controller.userOnlineStatusData[record.users[0].username] &&  <Box bg="green.400" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">Online</Box>
                     }
                 </Flex>
             </Flex>

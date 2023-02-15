@@ -61,6 +61,8 @@ class SocketIOController{
 
     startListeners(){
         this.listenerForNewChat();
+        this.listenerForOnlineStatusUpdate();
+        this.listenerForOfflineStatusUpdate();
     }
 
     fetchChatList(){
@@ -77,6 +79,23 @@ class SocketIOController{
         })
     }
 
+    listenerForOnlineStatusUpdate(){
+        this.socketServer.on("user_came_online", (data) => {
+            this.setUserOnlineStatusData({
+                ...this.userOnlineStatusData,
+                [data.username]: true
+            })
+        })
+    }
+
+    listenerForOfflineStatusUpdate(){
+        this.socketServer.on("user_gone_offline", (data) => {
+            this.setUserOnlineStatusData({
+                ...this.userOnlineStatusData,
+                [data.username]: false
+            })
+        })
+    }
 }
 
 export default SocketIOController

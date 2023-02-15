@@ -40,7 +40,7 @@ export default function ChatList({controller}) {
                     <Button size='xs' float="right" colorScheme="red">Logout</Button>
                 </Stack>
                 {
-                    controller.chatList.map(chat => <ChatCard record={chat} key={chat.id} />)
+                    controller.chatList.map(chat => <ChatCard record={chat} controller={controller} key={chat.id} />)
                 }
             </Stack>
         </Box>
