@@ -4,6 +4,8 @@ import Chat from  "@/models/chat";
 import Message from  "@/models/message";
 import {useRef} from "react";
 import User from "@/models/user";
+import config from "@/config";
+import axios from "axios";
 
 class SocketIOController{
     /**
@@ -253,6 +255,46 @@ class SocketIOController{
                 this.actOnNewIncomingMessage(this.currentChatIdRef.current, data.data);
             }
         })
+    }
+
+    sendFileMessage(){
+        const uploaded_file = this.dataRef.current.uploaded_file;
+        if(!uploaded_file) return;
+        this.socketServer.emit("new_message", {
+            "chat_id": this.currentChatIdRef.current,
+            "message_type": uploaded_file["file_type"],
+            "text_content": "",
+            "file_stored_name":  uploaded_file["file_stored_name"],
+            "file_name":  uploaded_file["file_name"],
+            "file_mime_type":  uploaded_file["mime_type"],
+            "is_replied": false
+        }, (data)=>{
+            this.dataRef.current.message.text = "";
+            if(data.success){
+                this.actOnNewIncomingMessage(this.currentChatIdRef.current, data.data);
+            }
+            this.dataRef.current.uploaded_file = null;
+        })
+    }
+
+    async uploadFile(){
+        if(this.dataRef.current.chat_upload_file_ref === null) return null;
+        if(this.dataRef.current.chat_upload_file_ref.length === 0) return null;
+        let data = new FormData();
+        data.append('file', this.dataRef.current.chat_upload_file_ref[0]);
+        const axios_config = {
+            method: 'post',
+            url: `${config.BACKEND_URL}/file/upload`,
+            data : data
+        }
+        try{
+            const response = await axios(axios_config);
+            this.dataRef.current.chat_upload_file_ref = null;
+            return response.data;
+        }catch (e){
+            console.log(e)
+            return null;
+        }
     }
 
     actOnNewIncomingMessage(chatId, data){
