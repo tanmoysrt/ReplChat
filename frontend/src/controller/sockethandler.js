@@ -79,6 +79,7 @@ class SocketIOController{
             if(data.success){
                 const status_data = data["data"];
                 let status_data_obj = {};
+                // TODO: add a timestamp limit
                 const timestamp_limit = Date.now() - 10000;
                 for(let i=0; i<status_data.length; i++){
                     status_data_obj[status_data[i].username] = status_data[i].online;
@@ -91,6 +92,7 @@ class SocketIOController{
     listenerForNewChat(){
         this.socketServer.on("new_chat_added", (data) => {
             this.setChatList([...this.chatList, Chat.fromJson(data)]);
+            this.fetchUserOnlineStatusData();
         })
     }
 
