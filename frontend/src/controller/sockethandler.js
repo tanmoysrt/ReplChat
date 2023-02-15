@@ -3,6 +3,7 @@ import SocketServer from "./sockerserver";
 import Chat from  "@/models/chat";
 import Message from  "@/models/message";
 import {useRef} from "react";
+import User from "@/models/user";
 
 class SocketIOController{
     /**
@@ -78,12 +79,54 @@ class SocketIOController{
         })
     }
 
+    initNewGroupChat(name){
+        this.socketServer.emit("new_group_chat", {
+            name: name
+        }, (data) => {
+            if(data.success){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Group Created'
+                })
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: data.error || 'Something went wrong!',
+                })
+            }
+        })
+    }
+
+    addMemberToGroupChat(username){
+        this.socketServer.emit("add_member_group_chat", {
+            chat_id: this.currentChatIdRef.current,
+            username: username
+        }, (data) => {
+            if(data.success){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.message || "Member added"
+                })
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: data.error || 'Something went wrong!',
+                })
+            }
+        })
+    }
+
     startListeners(){
         this.listenerForNewChat();
         this.listenerForOnlineStatusUpdate();
         this.listenerForOfflineStatusUpdate();
         this.listenerForTypingUpdate();
         this.listenerForNewMessage();
+        this.listenerForNewMemberInGroup();
     }
 
     fetchChatList(){
@@ -135,6 +178,16 @@ class SocketIOController{
     listenerForNewMessage(){
         this.socketServer.on("new_message_added", (data)=>{
             this.actOnNewIncomingMessage(data["chat_id"], data["data"])
+        })
+    }
+
+    listenerForNewMemberInGroup(){
+        this.socketServer.on("new_member_added", (data)=>{
+            const chat_id = data["chat_id"];
+            const user_added = User.fromJson(data["user"]);
+            const chat_record = this.getChatDetailsById(chat_id);
+            chat_record.users.push(user_added);
+            this.setChatList([...this.chatListRef.current]);
         })
     }
 

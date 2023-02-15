@@ -10,6 +10,9 @@ import chat from "@/models/chat";
 export default function Home() {
   const dataRef = useRef({
     "init": false,
+    "new_chat_username": "",
+    "new_group_chat_name": "",
+    "new_member_username": "",
     "message": {
       "text": ""
     },
