@@ -338,6 +338,10 @@ class SocketIOController{
         return JSON.parse(jsonPayload);
     }
 
+    generateAssetLink(key, name, type){
+        return `${config.BACKEND_URL}/file/access?key=${key}&name=${name}&type=${type}`;
+    }
+
     scrollToBottom(){
         const chatWindow = document.getElementById('message_box');
         if(!chatWindow) return;
