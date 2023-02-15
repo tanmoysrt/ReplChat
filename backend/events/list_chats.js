@@ -10,7 +10,7 @@ const prisma = require("../db").getInstance();
  **/
 function handler(io, socket){
     socket.on("list_chats", async(callback) => {
-        const chat_records = await prisma.chatRecord.findMany({
+        let chat_records = await prisma.chatRecord.findMany({
             where: {
                 users: {
                     some: {
@@ -31,6 +31,10 @@ function handler(io, socket){
                 }
             }
         })
+        for (let i = 0; i < chat_records.length; i++) {
+            chat_records[i].users = chat_records[i].users.filter(user => user.username !== socket.user.username)
+            
+        }
         callback({
             success: true,
             data: chat_records
