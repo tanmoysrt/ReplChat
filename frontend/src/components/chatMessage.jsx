@@ -10,7 +10,9 @@ import Message from "@/models/message";
 export default function ChatMessage({record, controller}){
     const isMe = controller.dataRef.current.user.username === record.sender.username;
     return (
-        <Box p={2}  w="fit-content" borderRadius={12} alignSelf={isMe ? "flex-end" : "flex-start"} bg={isMe ? "gray.100" : "teal.100"} color={isMe ? "black": "black"} key={record.id}>
+        record.is_notification_message ?
+            <Box p={2} alignSelf="center">{record.text_content} | {record.created_at}</Box>
+        : <Box p={2}  w="fit-content" borderRadius={12} alignSelf={isMe ? "flex-end" : "flex-start"} bg={isMe ? "gray.100" : "teal.100"} color={isMe ? "black": "black"} key={record.id}>
             <Flex mb={2}>
                 <Text fontWeight="medium">{record.sender.name}</Text>
                 <Text fontWeight="normal" color="gray.700" ml={2}>{record.created_at}</Text>
