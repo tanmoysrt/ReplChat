@@ -305,7 +305,10 @@ class SocketIOController{
         }else{
             chat.unread_count = chat.unread_count + 1;
         }
-        chat.last_message_text = message.text_content;
+        if (message.message_type ==="TEXT") chat.last_message_text = message.text_content
+        else {
+            chat.last_message_text = message.message_type
+        }
         chat.last_message_time = message.created_at;
 
         this.setChatList([...this.chatListRef.current]);
