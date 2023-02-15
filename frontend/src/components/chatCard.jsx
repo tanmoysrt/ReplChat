@@ -26,6 +26,9 @@ export default function ChatCard({record, controller}){
                 <Text fontWeight="medium" fontSize="md">{record.name}</Text>
                 <Flex gap="2">
                     {
+                        (record.unread_count > 0) && <Box bg="red.400" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">{record.unread_count}</Box>
+                    }
+                    {
                        !record.is_group_chat && controller.userOnlineStatusData[record.users[0].username] &&  <Box bg="green.400" color="white" px="2" py="0.5" borderRadius="full" fontWeight="medium" fontSize="sm">Online</Box>
                     }
                 </Flex>

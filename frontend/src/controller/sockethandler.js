@@ -153,7 +153,6 @@ class SocketIOController{
     }
 
     fetchCurrentChatMessages(){
-        console.log(this.currentChatIdRef.current)
         this.socketServer.emit("fetch_messages", {
             "chat_id": this.currentChatIdRef.current
         }, (data)=>{
@@ -257,17 +256,15 @@ class SocketIOController{
     }
 
     actOnNewIncomingMessage(chatId, data){
+        const message = Message.fromJSON(data);
+        const chat = this.getChatDetailsById(chatId);
         if(this.currentChatIdRef.current === chatId){
-            const message = Message.fromJSON(data);
             this.setCurrentChatMessages([...this.currentChatMessagesRef.current, message]);
-
-            const chat = this.getChatDetailsById(chatId);
-            chat.last_message_text = message.text_content;
-            chat.last_message_time = message.created_at;
-
+        }else{
+            chat.unread_count = chat.unread_count + 1;
         }
-
-
+        chat.last_message_text = message.text_content;
+        chat.last_message_time = message.created_at;
 
         this.setChatList([...this.chatListRef.current]);
         setTimeout(()=>{
@@ -281,6 +278,10 @@ class SocketIOController{
         this.setCurrentChatId(chatId);
         this.currentChatIdRef.current = chatId;
         this.fetchCurrentChatMessages();
+        // reset unread messages count
+        const chat = this.getChatDetailsById(chatId);
+        chat.unread_count = 0;
+        this.setChatList([...this.chatListRef.current]);
     }
 
     // Decode JWT Token

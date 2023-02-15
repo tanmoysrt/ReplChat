@@ -23,6 +23,7 @@ class Chat{
         this.typing = false;
         this.typing_name = "";
         this.typing_timeout_ref = null;
+        this.unread_count = 0;
     }
 
     setTyping(name) {
