@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import SocketServer from "./sockerserver";
 import Chat from  "@/models/chat";
+import {useRef} from "react";
 
 class SocketIOController{
     /**
@@ -21,8 +22,10 @@ class SocketIOController{
         chatList, setChatList, chatListRef,
         userOnlineStatusData, setUserOnlineStatusData, userOnlineStatusDataRef,
         currentChatId, setCurrentChatId, currentChatIdRef,
-        currentChatMessages, setCurrentChatMessages, currentChatMessagesRef
+        currentChatMessages, setCurrentChatMessages, currentChatMessagesRef,
+        dataRef
         ){
+        this.dataRef = dataRef;
         this.chatList = chatList;
         this.setChatList = setChatList;
         this.chatListRef = chatListRef;
@@ -135,13 +138,19 @@ class SocketIOController{
                 chat.typing = false;
                 chat.typing_name = "";
                 this.setChatList([...this.chatListRef.current]);
-            }, 5000);
+            }, 2000);
             this.setChatList([...this.chatListRef.current]);
         })
     }
 
     getChatDetailsById(chatId){
         return this.chatListRef.current.find(chat => chat.id === chatId);
+    }
+
+    sendTypingUpdate(){
+        this.socketServer.emit("typing", {
+            "chat_id" : this.currentChatIdRef.current
+        })
     }
 
     chooseChat(chatId){

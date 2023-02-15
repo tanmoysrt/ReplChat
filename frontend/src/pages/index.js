@@ -9,7 +9,10 @@ import chat from "@/models/chat";
 
 export default function Home() {
   const dataRef = useRef({
-    "init": false
+    "init": false,
+    "message": {
+      "text": ""
+    }
   });
   const [chatList, setChatList] = useState([]);
   const chatListRef = useRef([]);
@@ -23,7 +26,8 @@ export default function Home() {
       chatList, setChatList, chatListRef,
       userOnlineStatusData, setUserOnlineStatusData, userOnlineStatusDataRef,
       currentChatId, setCurrentChatId, currentChatIdRef,
-      currentChatMessages, setCurrentChatMessages, currentChatMessagesRef
+      currentChatMessages, setCurrentChatMessages, currentChatMessagesRef,
+      dataRef
   )
 
   useEffect(()=>{
