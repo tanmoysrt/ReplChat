@@ -21,9 +21,8 @@ class Chat{
             this.name = this.users[0].name;
         }
         this.typing = false;
-        this.typing_details = {
-            "name": ""
-        }
+        this.typing_name = "";
+        this.typing_timeout_ref = null;
     }
 
     setTyping(name) {

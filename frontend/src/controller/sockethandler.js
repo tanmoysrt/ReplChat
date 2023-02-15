@@ -5,28 +5,36 @@ import Chat from  "@/models/chat";
 class SocketIOController{
     /**
      * @param {Chat[]} chatList
-     * @param {function([])} setChatList 
+     * @param {function([])} setChatList
+     * @param chatListRef
      * @param {{}} userOnlineStatusData
      * @param {function({})} setUserOnlineStatusData
-     * @param {[]} currentChatDetails 
-     * @param {function([])} setCurrentChatDetails 
-     * @param {[]} currentChatMessages 
-     * @param {function([])} setCurrentChatMessages 
+     * @param userOnlineStatusDataRef
+     * @param {string} currentChatId
+     * @param {function(string)} setCurrentChatId
+     * @param currentChatIdRef
+     * @param {[]} currentChatMessages
+     * @param {function([])} setCurrentChatMessages
+     * @param currentChatMessagesRef
      */
     constructor(
-        chatList, setChatList, 
-        userOnlineStatusData, setUserOnlineStatusData, 
-        currentChatDetails, setCurrentChatDetails,
-        currentChatMessages, setCurrentChatMessages,                
+        chatList, setChatList, chatListRef,
+        userOnlineStatusData, setUserOnlineStatusData, userOnlineStatusDataRef,
+        currentChatId, setCurrentChatId, currentChatIdRef,
+        currentChatMessages, setCurrentChatMessages, currentChatMessagesRef
         ){
         this.chatList = chatList;
         this.setChatList = setChatList;
+        this.chatListRef = chatListRef;
         this.userOnlineStatusData = userOnlineStatusData;
         this.setUserOnlineStatusData = setUserOnlineStatusData;
-        this.currentChatDetails = currentChatDetails;
-        this.setCurrentChatDetails = setCurrentChatDetails;
+        this.userOnlineStatusDataRef = userOnlineStatusDataRef;
+        this.currentChatId = currentChatId;
+        this.setCurrentChatId = setCurrentChatId;
+        this.currentChatIdRef = currentChatIdRef;
         this.currentChatMessages = currentChatMessages;
         this.setCurrentChatMessages = setCurrentChatMessages;
+        this.currentChatMessagesRef = currentChatMessagesRef;
         this.socketServer = SocketServer.getInstance();
     }
 
@@ -64,6 +72,7 @@ class SocketIOController{
         this.listenerForNewChat();
         this.listenerForOnlineStatusUpdate();
         this.listenerForOfflineStatusUpdate();
+        this.listenerForTypingUpdate();
     }
 
     fetchChatList(){
@@ -91,7 +100,7 @@ class SocketIOController{
 
     listenerForNewChat(){
         this.socketServer.on("new_chat_added", (data) => {
-            this.setChatList([...this.chatList, Chat.fromJson(data)]);
+            this.setChatList([...this.chatListRef.current, Chat.fromJson(data)]);
             this.fetchUserOnlineStatusData();
         })
     }
@@ -99,7 +108,7 @@ class SocketIOController{
     listenerForOnlineStatusUpdate(){
         this.socketServer.on("user_came_online", (data) => {
             this.setUserOnlineStatusData({
-                ...this.userOnlineStatusData,
+                ...this.userOnlineStatusDataRef.current,
                 [data.username]: true
             })
         })
@@ -108,10 +117,36 @@ class SocketIOController{
     listenerForOfflineStatusUpdate(){
         this.socketServer.on("user_gone_offline", (data) => {
             this.setUserOnlineStatusData({
-                ...this.userOnlineStatusData,
+                ...this.userOnlineStatusDataRef.current,
                 [data.username]: false
             })
         })
+    }
+
+    listenerForTypingUpdate(){
+        this.socketServer.on("typing_update", (data) => {
+            const chat =  this.getChatDetailsById(data["chat_id"]);
+            chat.typing = true;
+            chat.typing_name = data["name"];
+            if(chat.typing_timeout_ref){
+                clearTimeout(chat.typing_timeout_ref);
+            }
+            chat.typing_timeout_ref = setTimeout(() => {
+                chat.typing = false;
+                chat.typing_name = "";
+                this.setChatList([...this.chatListRef.current]);
+            }, 5000);
+            this.setChatList([...this.chatListRef.current]);
+        })
+    }
+
+    getChatDetailsById(chatId){
+        return this.chatListRef.current.find(chat => chat.id === chatId);
+    }
+
+    chooseChat(chatId){
+        this.setCurrentChatId(chatId);
+        // this.fetchChatMessages(chatId);
     }
 }
 

@@ -3,6 +3,7 @@ import Chat from "@/models/chat";
 
 /**
  * @param {Chat} record
+ * @param controller
  * @returns {JSX.Element}
  * @constructor
  */
@@ -19,6 +20,7 @@ export default function ChatCard({record, controller}){
             borderRadius={12}
             p={4}
             cursor="pointer"
+            onClick={(e)=>controller.setCurrentChatId(record.id)}
         >
             <Flex direction="row" justifyContent="space-between">
                 <Text fontWeight="medium" fontSize="md">{record.name}</Text>
