@@ -207,11 +207,14 @@ class SocketIOController{
         if(this.currentChatIdRef.current === chatId){
             const message = Message.fromJSON(data);
             this.setCurrentChatMessages([...this.currentChatMessagesRef.current, message]);
+
+            const chat = this.getChatDetailsById(chatId);
+            chat.last_message_text = message.text_content;
+            chat.last_message_time = message.created_at;
+
         }
 
-        const chat = this.getChatDetailsById(chatId);
-        chat.last_message_text = data.text_content;
-        chat.last_message_time = data.created_at;
+
 
         this.setChatList([...this.chatListRef.current]);
         setTimeout(()=>{
