@@ -36,7 +36,7 @@ export default function Home() {
       if(localStorage.getItem("token") === null){
         window.location.href = "/auth"
       }else{
-        socketIOController.init();
+        socketIOController.init(localStorage.getItem("token"));
       }
     }
 

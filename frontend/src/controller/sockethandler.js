@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import SocketServer from "./sockerserver";
 import Chat from  "@/models/chat";
+import Message from  "@/models/message";
 import {useRef} from "react";
 
 class SocketIOController{
@@ -14,7 +15,7 @@ class SocketIOController{
      * @param {string} currentChatId
      * @param {function(string)} setCurrentChatId
      * @param currentChatIdRef
-     * @param {[]} currentChatMessages
+     * @param {Message[]} currentChatMessages
      * @param {function([])} setCurrentChatMessages
      * @param currentChatMessagesRef
      */
@@ -39,9 +40,17 @@ class SocketIOController{
         this.setCurrentChatMessages = setCurrentChatMessages;
         this.currentChatMessagesRef = currentChatMessagesRef;
         this.socketServer = SocketServer.getInstance();
+        this.username = "";
+        this.name = "";
     }
 
-    init(){
+
+
+
+    init(token){
+        const token_details = this.parseJwt(token);
+        this.username = token_details.username;
+        this.name = token_details.name;
         this.socketServer.init(()=>{
             this.socketServer.socket.once("connect", () => {
                 this.startListeners();
@@ -101,6 +110,19 @@ class SocketIOController{
         })
     }
 
+    fetchCurrentChatMessages(){
+        console.log(this.currentChatIdRef.current)
+        this.socketServer.emit("fetch_messages", {
+            "chat_id": this.currentChatIdRef.current
+        }, (data)=>{
+            console.log(data)
+            if(data.success){
+                const messages = data["data"].map(message => Message.fromJSON(message));
+                this.setCurrentChatMessages(messages);
+            }
+        })
+    }
+
     listenerForNewChat(){
         this.socketServer.on("new_chat_added", (data) => {
             this.setChatList([...this.chatListRef.current, Chat.fromJson(data)]);
@@ -153,9 +175,45 @@ class SocketIOController{
         })
     }
 
+    sendTextMessage(){
+        const text = this.dataRef.current.message.text;
+        this.dataRef.current.message.text = "";
+        if(text.trim() === "") return;
+        document.getElementById("text_input_box_chat").value = "";
+        this.socketServer.emit("new_message", {
+            "chat_id": this.currentChatIdRef.current,
+            "message_type": "TEXT",
+            "text_content": text,
+            "file_stored_name":  null,
+            "file_name":  null,
+            "file_mime_type":  null
+        }, (data)=>{
+            this.dataRef.current.message.text = "";
+            if(data.success){
+                const message = Message.fromJSON(data.data);
+                this.setCurrentChatMessages([...this.currentChatMessagesRef.current, message]);
+            }
+        })
+    }
+
     chooseChat(chatId){
+        this.dataRef.current.message.text = "";
+        this.setCurrentChatMessages([]);
         this.setCurrentChatId(chatId);
-        // this.fetchChatMessages(chatId);
+        this.currentChatIdRef.current = chatId;
+        this.fetchCurrentChatMessages();
+    }
+
+    // Decode JWT Token
+    // collected from : https://stackoverflow.com/questions/38552003/how-to-decode-jwt-token-in-javascript-without-using-a-library
+    parseJwt (token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
     }
 }
 
