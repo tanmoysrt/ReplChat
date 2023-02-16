@@ -43,19 +43,19 @@ function handler(io, socket){
                     chat_id: chat_records[i].id
                 },
                 orderBy: {
-                    created_at: "desc"
+                    timestamp: "desc"
                 },
                 select: {
                     message_type: true,
                     text_content: true,
-                    created_at: true,
+                    timestamp: true,
                 }
             })
             if (last_message) {
                 chat_records[i].last_message = {
                     message_type: last_message.message_type,
                     text_content: last_message.text_content,
-                    created_at: moment(last_message.created_at.toISOString()).fromNow()
+                    created_at: moment(parseInt(last_message.timestamp)).fromNow()
                 }
             }else{
                 chat_records[i].last_message = {
