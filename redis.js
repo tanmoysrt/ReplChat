@@ -8,7 +8,7 @@ class RedisClient {
    */
   static getInstance(){
     if (RedisClient.instance == null) {
-      RedisClient.instance = new Redis();
+      RedisClient.instance = new Redis(6379, process.env.REDIS_HOST);
     }
     
     return RedisClient.instance;
