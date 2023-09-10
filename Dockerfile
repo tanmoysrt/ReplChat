@@ -7,4 +7,4 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 5000
-CMD [ "npm run dbMigrate && npm run start" ]
+ENTRYPOINT [ "/bin/sh", "-c", "npm run dbMigrate && npm run start" ]
