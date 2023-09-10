@@ -1,5 +1,0 @@
-JWT_SECRET_KEY=76wq8bhfdhhjdghsj64
-DEBUG=1
-PORT=5000
-DB_URL=postgresql://postgres:postgres@postgresdb:5432/replchat
-REDIS_HOST=redis
